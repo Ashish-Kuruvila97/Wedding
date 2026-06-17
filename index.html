@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wedding Invitation</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Great+Vibes&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper: #f6ead7;
+      --paper-light: #fff8ee;
+      --paper-dark: #dfc9aa;
+      --ink: #5a3f26;
+      --muted: #80684f;
+      --gold: #b88a44;
+      --deep-gold: #8a642f;
+      --sage: #8a9a74;
+      --cream: #fffaf2;
+      --shadow: rgba(83, 56, 28, 0.25);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(184, 138, 68, 0.14), transparent 35%),
+        linear-gradient(135deg, #efe1cc, #fff8ee 45%, #e6d3b8);
+      overflow-x: hidden;
+    }
+
+    body.locked {
+      overflow: hidden;
+    }
+
+    .leaf-bg {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0.45;
+    }
+
+    .leaf-bg span {
+      position: absolute;
+      color: rgba(138, 154, 116, 0.55);
+      font-size: 22px;
+      animation: floatLeaf linear infinite;
+    }
+
+    @keyframes floatLeaf {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 0; }
+      12% { opacity: 1; }
+      100% { transform: translateY(110vh) rotate(260deg); opacity: 0; }
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 18px;
+      background:
+        radial-gradient(circle at top, rgba(255, 255, 255, 0.52), transparent 35%),
+        linear-gradient(135deg, #e7d3b9, #f8eddd, #d8c0a0);
+      transition: opacity 0.9s ease, visibility 0.9s ease;
+    }
+
+    .intro.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .phone-frame {
+      width: min(390px, 94vw);
+      height: min(790px, 96vh);
+      border-radius: 42px;
+      background: #161616;
+      padding: 12px;
+      box-shadow: 0 28px 90px rgba(58, 39, 18, 0.36);
+    }
+
+    .phone-screen {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(255,255,255,0.25), transparent 28%),
+        #f5e7d0;
+    }
+
+    .status-bar {
+      position: absolute;
+      top: 10px;
+      left: 0;
+      width: 100%;
+      z-index: 8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 22px;
+      font-size: 11px;
+      color: #392817;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+    }
+
+    .notch {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 118px;
+      height: 27px;
+      background: #111;
+      border-radius: 0 0 18px 18px;
+      z-index: 9;
+    }
+
+    .envelope-scene {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      place-items: center;
+      padding: 36px 24px;
+    }
+
+    .envelope {
+      position: relative;
+      width: 100%;
+      max-width: 330px;
+      height: 470px;
+      border-radius: 18px;
+      background:
+        linear-gradient(135deg, rgba(255,255,255,0.18), transparent 32%),
+        var(--paper);
+      box-shadow: 0 25px 65px rgba(92, 63, 31, 0.22);
+      border: 1px solid rgba(138, 100, 47, 0.18);
+      overflow: hidden;
+      transition: transform 0.9s ease;
+    }
+
+    .envelope::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(142deg, transparent 49.5%, rgba(172, 139, 98, 0.32) 50%, transparent 50.5%),
+        linear-gradient(218deg, transparent 49.5%, rgba(172, 139, 98, 0.28) 50%, transparent 50.5%);
+      z-index: 2;
+    }
+
+    .envelope-flap {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 56%;
+      background:
+        linear-gradient(180deg, #f0ddc0, #dfc39b);
+      clip-path: polygon(0 0, 100% 0, 50% 100%);
+      transform-origin: top;
+      z-index: 5;
+      transition: transform 1.15s cubic-bezier(.7,0,.2,1);
+    }
+
+    .envelope-pocket {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 56%;
+      background:
+        linear-gradient(142deg, #e8d1ad 0 50%, transparent 50%),
+        linear-gradient(218deg, #f3e2c9 0 50%, transparent 50%),
+        linear-gradient(180deg, #ead5b4, #dec19a);
+      z-index: 6;
+    }
+
+    .seal {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 82px;
+      height: 82px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      z-index: 7;
+      color: #392817;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      letter-spacing: -1px;
+      background:
+        radial-gradient(circle at 30% 22%, #f5d48a, #b98538 56%, #7b5228);
+      box-shadow:
+        inset 0 0 0 3px rgba(86, 56, 23, 0.2),
+        0 10px 24px rgba(79, 50, 20, 0.28);
+      transition: opacity 0.5s ease, transform 0.7s ease;
+    }
+
+    .seal::before {
+      content: "♡";
+      position: absolute;
+      top: 16px;
+      font-size: 14px;
+      opacity: 0.65;
+    }
+
+    .intro-text {
+      position: absolute;
+      top: 82px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 84%;
+      z-index: 4;
+      text-align: center;
+      color: var(--ink);
+    }
+
+    .intro-text .small {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--deep-gold);
+      margin-bottom: 16px;
+    }
+
+    .intro-text h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 1.05;
+      letter-spacing: 1px;
+    }
+
+    .intro-text .and {
+      font-family: 'Great Vibes', cursive;
+      font-size: 35px;
+      color: var(--gold);
+      line-height: 1;
+      margin: 6px 0;
+    }
+
+    .tap-area {
+      position: absolute;
+      left: 50%;
+      bottom: 78px;
+      transform: translateX(-50%);
+      z-index: 10;
+      text-align: center;
+    }
+
+    .open-btn {
+      border: 1px solid rgba(138, 100, 47, 0.45);
+      background: rgba(255, 248, 238, 0.62);
+      color: var(--ink);
+      padding: 12px 28px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: 0 0 0 rgba(184, 138, 68, 0);
+      animation: softPulse 2.6s ease-in-out infinite;
+    }
+
+    @keyframes softPulse {
+      0%, 100% { box-shadow: 0 0 0 rgba(184, 138, 68, 0); }
+      50% { box-shadow: 0 0 28px rgba(184, 138, 68, 0.36); }
+    }
+
+    .tap-area p {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+    }
+
+    .intro.opening .envelope {
+      transform: translateY(8px) scale(1.03);
+    }
+
+    .intro.opening .envelope-flap {
+      transform: rotateX(180deg);
+    }
+
+    .intro.opening .seal {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.55);
+    }
+
+    .intro.opening .tap-area {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .invite-card-peek {
+      position: absolute;
+      left: 50%;
+      bottom: 36px;
+      width: 84%;
+      height: 360px;
+      transform: translateX(-50%) translateY(255px);
+      background: var(--paper-light);
+      border: 1px solid rgba(184, 138, 68, 0.25);
+      border-radius: 16px;
+      z-index: 4;
+      text-align: center;
+      padding: 35px 18px;
+      box-shadow: 0 12px 32px rgba(70, 46, 21, 0.16);
+      transition: transform 1.2s ease 0.75s;
+    }
+
+    .intro.opening .invite-card-peek {
+      transform: translateX(-50%) translateY(-18px);
+    }
+
+    .invite-card-peek .small {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--deep-gold);
+      margin-bottom: 18px;
+    }
+
+    .invite-card-peek h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 32px;
+      line-height: 1.15;
+      color: var(--ink);
+    }
+
+    .invite-card-peek .script {
+      font-family: 'Great Vibes', cursive;
+      font-size: 48px;
+      color: var(--gold);
+      margin-top: 18px;
+    }
+
+    main {
+      position: relative;
+      z-index: 2;
+    }
+
+    section {
+      min-height: 100vh;
+      padding: 72px 22px;
+      display: grid;
+      place-items: center;
+    }
+
+    .card {
+      width: min(780px, 100%);
+      background: rgba(255, 248, 238, 0.78);
+      border: 1px solid rgba(184, 138, 68, 0.28);
+      border-radius: 30px;
+      padding: clamp(34px, 6vw, 66px) 24px;
+      text-align: center;
+      box-shadow: 0 24px 70px rgba(83, 56, 28, 0.16);
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before,
+    .card::after {
+      content: "❦";
+      position: absolute;
+      color: rgba(138, 154, 116, 0.35);
+      font-size: 68px;
+      line-height: 1;
+    }
+
+    .card::before {
+      left: 20px;
+      top: 12px;
+    }
+
+    .card::after {
+      right: 20px;
+      bottom: 12px;
+      transform: rotate(180deg);
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--deep-gold);
+      margin-bottom: 20px;
+      font-weight: 500;
+    }
+
+    h1, h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 11vw, 92px);
+      line-height: 0.95;
+      letter-spacing: 1px;
+    }
+
+    .script-and {
+      font-family: 'Great Vibes', cursive;
+      color: var(--gold);
+      font-size: clamp(48px, 10vw, 72px);
+      line-height: 0.9;
+      margin: 10px 0;
+    }
+
+    .wedding-script {
+      font-family: 'Great Vibes', cursive;
+      color: var(--gold);
+      font-size: clamp(58px, 13vw, 98px);
+      margin: 28px 0 18px;
+    }
+
+    .lead {
+      max-width: 590px;
+      margin: 0 auto;
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 16px;
+    }
+
+    .date-big {
+      margin-top: 32px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 6vw, 46px);
+      color: var(--ink);
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(34px, 7vw, 58px);
+      margin-bottom: 18px;
+      color: var(--ink);
+    }
+
+    .details-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 18px;
+      margin-top: 34px;
+      text-align: left;
+    }
+
+    .detail-box {
+      background: rgba(255, 255, 255, 0.38);
+      border: 1px solid rgba(184, 138, 68, 0.22);
+      border-radius: 20px;
+      padding: 22px;
+    }
+
+    .detail-box h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 25px;
+      color: var(--deep-gold);
+      margin-bottom: 12px;
+    }
+
+    .detail-box p {
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 14px;
+    }
+
+    .map-box {
+      margin-top: 28px;
+      background:
+        linear-gradient(135deg, rgba(138,154,116,0.13), rgba(255,255,255,0.24)),
+        rgba(255,255,255,0.42);
+      border: 1px solid rgba(184, 138, 68, 0.22);
+      border-radius: 24px;
+      padding: 26px;
+    }
+
+    .map-illustration {
+      height: 160px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: var(--sage);
+      background:
+        linear-gradient(35deg, transparent 47%, rgba(138,154,116,0.22) 48%, rgba(138,154,116,0.22) 52%, transparent 53%),
+        linear-gradient(120deg, transparent 45%, rgba(184,138,68,0.16) 46%, rgba(184,138,68,0.16) 50%, transparent 51%),
+        #efe3d0;
+      margin-bottom: 18px;
+      font-size: 42px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      border: 1px solid rgba(138, 100, 47, 0.42);
+      background: linear-gradient(135deg, #c49a55, #9b7032);
+      color: white;
+      padding: 13px 28px;
+      border-radius: 999px;
+      font-size: 13px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      box-shadow: 0 14px 30px rgba(138, 100, 47, 0.22);
+    }
+
+    .verse {
+      margin-top: 32px;
+      padding-top: 26px;
+      border-top: 1px solid rgba(184, 138, 68, 0.25);
+    }
+
+    .verse p:first-child {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(24px, 5vw, 38px);
+      line-height: 1.35;
+      color: var(--ink);
+    }
+
+    .verse p:last-child {
+      margin-top: 13px;
+      color: var(--deep-gold);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .closing h2 {
+      font-family: 'Great Vibes', cursive;
+      color: var(--gold);
+      font-size: clamp(58px, 13vw, 98px);
+      font-weight: 400;
+      margin-bottom: 22px;
+    }
+
+    .closing .names {
+      margin-top: 30px;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(28px, 6vw, 44px);
+      color: var(--ink);
+    }
+
+    footer {
+      padding: 36px 20px 70px;
+      text-align: center;
+      color: var(--muted);
+      position: relative;
+      z-index: 2;
+      font-size: 14px;
+    }
+
+    @media (max-width: 720px) {
+      .details-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 54px 18px;
+      }
+    }
+  </style>
+</head>
+
+<body class="locked">
+  <div class="leaf-bg" id="leafBg"></div>
+
+  <div class="intro" id="intro">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="notch"></div>
+        <div class="status-bar">
+          <span>9:41</span>
+          <span>4G ▱</span>
+        </div>
+
+        <div class="envelope-scene">
+          <div class="envelope">
+            <div class="intro-text">
+              <p class="small">You are invited</p>
+              <h1>Ashish</h1>
+              <div class="and">&</div>
+              <h1>Christa</h1>
+            </div>
+
+            <div class="invite-card-peek">
+              <p class="small">Together with our families</p>
+              <h2>Ashish<br>&<br>Christa</h2>
+              <div class="script">Wedding</div>
+            </div>
+
+            <div class="envelope-flap"></div>
+            <div class="envelope-pocket"></div>
+            <div class="seal">AC</div>
+          </div>
+
+          <div class="tap-area">
+            <button class="open-btn" id="openInvitation">Tap to Open</button>
+            <p>Wedding Invitation</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section id="home">
+      <div class="card">
+        <p class="eyebrow">Together with our families</p>
+        <h1 class="hero-title">Ashish</h1>
+        <div class="script-and">&</div>
+        <h1 class="hero-title">Christa</h1>
+        <div class="wedding-script">Wedding</div>
+        <p class="lead">
+          With grateful hearts, we joyfully invite you to celebrate our wedding day
+          as we begin this beautiful journey together.
+        </p>
+        <p class="date-big">Saturday, 13 July 2026</p>
+      </div>
+    </section>
+
+    <section id="details">
+      <div class="card">
+        <h2 class="section-title">Wedding Details</h2>
+        <p class="lead">Your presence and blessings will make our day even more special.</p>
+
+        <div class="details-grid">
+          <div class="detail-box">
+            <h3>Wedding Ceremony</h3>
+            <p>
+              <strong>Date:</strong> Saturday, 13 July 2026<br>
+              <strong>Time:</strong> 10:30 AM<br>
+              <strong>Venue:</strong> Church / Ceremony Venue<br>
+              <strong>Address:</strong> Add full address here
+            </p>
+          </div>
+
+          <div class="detail-box">
+            <h3>Reception</h3>
+            <p>
+              <strong>Time:</strong> 06:00 PM onwards<br>
+              <strong>Venue:</strong> Reception Venue<br>
+              <strong>Address:</strong> Add reception address here
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="location">
+      <div class="card">
+        <h2 class="section-title">Location</h2>
+        <div class="map-box">
+          <div class="map-illustration">⌖</div>
+          <a class="btn" href="https://maps.app.goo.gl/ScECFsZaf27epcaJ6" target="_blank" rel="noopener">
+            Open in Maps
+          </a>
+        </div>
+
+        <div class="verse">
+          <p>“A cord of three strands is not quickly broken.”</p>
+          <p>Ecclesiastes 4:12</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="message">
+      <div class="card closing">
+        <h2>Thank You</h2>
+        <p class="lead">
+          We can’t wait to celebrate this beautiful day with you.
+          Your love, prayers, and presence mean so much to us.
+        </p>
+        <p class="names">Ashish & Christa</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    With love and gratitude, Ashish & Christa
+  </footer>
+
+  <script>
+    const intro = document.getElementById('intro');
+    const openInvitation = document.getElementById('openInvitation');
+
+    openInvitation.addEventListener('click', () => {
+      intro.classList.add('opening');
+
+      setTimeout(() => {
+        intro.classList.add('hidden');
+        document.body.classList.remove('locked');
+      }, 2100);
+    });
+
+    function createLeaves() {
+      const leafBg = document.getElementById('leafBg');
+      const symbols = ['❦', '☘', '♡', '❧'];
+
+      for (let i = 0; i < 26; i++) {
+        const leaf = document.createElement('span');
+        leaf.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+        leaf.style.left = Math.random() * 100 + 'vw';
+        leaf.style.animationDuration = 10 + Math.random() * 12 + 's';
+        leaf.style.animationDelay = Math.random() * 9 + 's';
+        leaf.style.transform = `scale(${0.6 + Math.random() * 0.8})`;
+        leafBg.appendChild(leaf);
+      }
+    }
+
+    createLeaves();
+  </script>
+</body>
+</html>
