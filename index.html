@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ashish & Christa | Wedding Invitation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:wght@400;500;600;700&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg1:#f3e7d3;
+      --bg2:#ead6b7;
+      --card:#fbf5ea;
+      --ink:#74522c;
+      --muted:#8f7755;
+      --gold:#b0894e;
+      --line:rgba(176,137,78,0.28);
+      --shadow:rgba(88,63,27,0.18);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Montserrat',sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at 20% 8%, rgba(255,255,255,0.55), transparent 26%),
+        linear-gradient(135deg,var(--bg2),var(--bg1) 45%, #e5d0ad);
+      overflow-x:hidden;
+    }
+    body.locked{overflow:hidden}
+
+    .site-bg{
+      position:fixed; inset:0; pointer-events:none; opacity:.22; z-index:0;
+      background:
+        linear-gradient(120deg, transparent 0 42%, rgba(255,255,255,.45) 47%, transparent 57%),
+        repeating-linear-gradient(100deg, rgba(255,255,255,.11) 0 2px, transparent 2px 28px);
+    }
+
+    .intro{
+      position:fixed; inset:0; z-index:9999;
+      display:grid; place-items:center;
+      background:
+        radial-gradient(circle at center, rgba(255,255,255,.45), transparent 45%),
+        linear-gradient(135deg,#e7d3b2,#f8f1e4 45%,#dcc19a);
+      transition:opacity .8s ease, visibility .8s ease;
+      padding:18px;
+    }
+    .intro.hidden{opacity:0; visibility:hidden; pointer-events:none}
+
+    .intro-phone{
+      position:relative;
+      width:min(360px, 94vw);
+      height:min(720px, 92vh);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .intro-slide{
+      position:absolute; inset:0;
+      background-position:center top;
+      background-repeat:no-repeat;
+      background-size:contain;
+      opacity:0;
+      transform:scale(.985);
+      transition:opacity .6s ease, transform .6s ease;
+      border-radius:12px;
+      filter:drop-shadow(0 18px 38px rgba(87,63,25,.14));
+    }
+
+    .intro-slide.active{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    .intro-tap-area{
+      position:absolute;
+      left:30%;
+      right:30%;
+      bottom:22%;
+      height:15%;
+      z-index:10;
+      background:transparent;
+      border:none;
+      cursor:pointer;
+    }
+
+    .pulse-ring{
+      position:absolute;
+      left:50%;
+      bottom:29%;
+      width:108px; height:108px;
+      transform:translateX(-50%);
+      border-radius:50%;
+      border:2px solid rgba(176,137,78,.32);
+      z-index:9;
+      pointer-events:none;
+      opacity:0;
+    }
+
+    .intro.tap-ready .pulse-ring{
+      animation:pulse 1.8s infinite;
+      opacity:1;
+    }
+
+    @keyframes pulse{
+      0%{transform:translateX(-50%) scale(.72); opacity:.58}
+      70%{transform:translateX(-50%) scale(1.18); opacity:0}
+      100%{transform:translateX(-50%) scale(1.18); opacity:0}
+    }
+
+    /* Main invitation pages */
+    main{position:relative; z-index:2}
+    section{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px 16px;
+    }
+
+    .page{
+      position:relative;
+      width:min(430px, 100%);
+      min-height:92vh;
+      padding:34px 28px 40px;
+      background:
+        radial-gradient(circle at 18% 10%, rgba(255,255,255,.48), transparent 26%),
+        linear-gradient(145deg,#f8f0e2,#fdf8ef 52%, #efdfc6);
+      border:1px solid var(--line);
+      box-shadow:0 18px 40px var(--shadow);
+      overflow:hidden;
+    }
+
+    @media (min-width:520px){
+      .page{border-radius:10px}
+    }
+
+    .floral{
+      position:absolute; width:175px; height:175px; opacity:.95; pointer-events:none;
+      color:#95a481;
+    }
+    .floral.tl{top:-16px; left:-20px}
+    .floral.br{right:-18px; bottom:-20px; transform:rotate(180deg)}
+
+    .floral svg{width:100%; height:100%}
+
+    .eyebrow{
+      text-align:center;
+      font-family:'Cinzel', serif;
+      font-size:11px;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--gold);
+      margin-top:92px;
+      margin-bottom:18px;
+      line-height:1.7;
+    }
+
+    .names{
+      text-align:center;
+      font-family:'Cormorant Garamond', serif;
+      font-weight:600;
+      color:var(--gold);
+      line-height:1.05;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      font-size:clamp(40px, 11vw, 54px);
+    }
+    .names .amp{
+      display:block;
+      font-size:40px;
+      line-height:.9;
+      margin:4px 0;
+    }
+
+    .script-title{
+      text-align:center;
+      font-family:'Alex Brush', cursive;
+      color:var(--gold);
+      font-size:clamp(62px, 17vw, 84px);
+      line-height:1;
+      margin:12px 0 20px;
+    }
+
+    .copy{
+      max-width:300px;
+      margin:0 auto;
+      text-align:center;
+      font-family:'Cormorant Garamond', serif;
+      font-size:22px;
+      line-height:1.58;
+      color:var(--muted);
+    }
+
+    .date-main{
+      margin-top:28px;
+      text-align:center;
+      font-family:'Cormorant Garamond', serif;
+      font-weight:600;
+      font-size:34px;
+      line-height:1.25;
+      color:var(--ink);
+    }
+
+    .scroll-down{
+      margin-top:28px;
+      text-align:center;
+      font-family:'Cinzel', serif;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
+      font-size:11px;
+      color:var(--muted);
+    }
+    .scroll-down span{
+      display:block;
+      color:var(--gold);
+      font-size:24px;
+      margin-top:6px;
+      animation:arrowDown 1.4s infinite;
+    }
+    @keyframes arrowDown{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(6px)}
+    }
+
+    .section-title{
+      text-align:center;
+      font-family:'Cinzel', serif;
+      font-size:16px;
+      letter-spacing:1.5px;
+      text-transform:uppercase;
+      color:var(--ink);
+      margin-top:96px;
+      margin-bottom:26px;
+    }
+
+    .detail-group{
+      margin-bottom:26px;
+    }
+    .detail-heading{
+      text-align:center;
+      font-family:'Cinzel', serif;
+      text-transform:uppercase;
+      letter-spacing:1.2px;
+      font-size:16px;
+      color:var(--gold-dark, #8e6a37);
+      margin-bottom:18px;
+    }
+
+    .detail-list{
+      display:grid;
+      gap:16px;
+    }
+    .detail-item{
+      display:grid;
+      grid-template-columns:32px 1fr;
+      gap:12px;
+      align-items:start;
+      font-family:'Cormorant Garamond', serif;
+      font-size:19px;
+      line-height:1.5;
+      color:var(--muted);
+    }
+    .icon{
+      width:28px; height:28px; border-radius:50%;
+      border:1px solid rgba(176,137,78,.4);
+      display:grid; place-items:center;
+      color:var(--gold);
+      font-size:13px;
+      margin-top:1px;
+    }
+
+    .divider{
+      width:180px; height:1px; margin:26px auto;
+      background:linear-gradient(to right, transparent, rgba(176,137,78,.55), transparent);
+      position:relative;
+    }
+    .divider::after{
+      content:"♡";
+      position:absolute; left:50%; top:50%;
+      transform:translate(-50%,-50%);
+      color:var(--gold);
+      background:#fbf5ea;
+      padding:0 8px;
+      font-size:12px;
+    }
+
+    .map-box{
+      height:170px;
+      border-radius:14px;
+      border:1px solid rgba(176,137,78,.2);
+      background:
+        linear-gradient(35deg, transparent 47%, rgba(149,164,129,.22) 48%, rgba(149,164,129,.22) 52%, transparent 53%),
+        linear-gradient(120deg, transparent 45%, rgba(176,137,78,.18) 46%, rgba(176,137,78,.18) 50%, transparent 51%),
+        #efe4d4;
+      display:grid;
+      place-items:center;
+      font-size:42px;
+      color:#7d9663;
+      margin-top:12px;
+    }
+
+    .map-btn{
+      display:inline-flex;
+      margin:18px auto 0;
+      align-items:center; justify-content:center;
+      padding:12px 30px;
+      text-decoration:none;
+      border-radius:999px;
+      background:linear-gradient(135deg, #c59b59, #a97a36);
+      color:white;
+      font-family:'Cinzel', serif;
+      text-transform:uppercase;
+      letter-spacing:1.4px;
+      font-size:12px;
+      box-shadow:0 12px 24px rgba(169,122,54,.2);
+    }
+
+    .message-block{
+      margin-top:26px;
+      text-align:center;
+    }
+    .message-block h3{
+      font-family:'Cinzel', serif;
+      text-transform:uppercase;
+      letter-spacing:1.5px;
+      font-size:14px;
+      color:var(--ink);
+      margin-bottom:12px;
+    }
+    .message-block p{
+      font-family:'Cormorant Garamond', serif;
+      font-size:20px;
+      line-height:1.62;
+      color:var(--muted);
+      max-width:305px;
+      margin:0 auto;
+    }
+
+    .thanks{
+      margin-top:150px;
+      text-align:center;
+      font-family:'Alex Brush', cursive;
+      color:var(--gold);
+      font-size:clamp(74px, 18vw, 98px);
+      line-height:1;
+    }
+
+    .closing-copy{
+      margin:16px auto 0;
+      max-width:300px;
+      text-align:center;
+      font-family:'Cinzel', serif;
+      font-size:14px;
+      line-height:1.9;
+      letter-spacing:1px;
+      text-transform:uppercase;
+      color:var(--ink);
+    }
+
+    .signoff{
+      margin-top:42px;
+      text-align:center;
+      font-family:'Cormorant Garamond', serif;
+      font-size:18px;
+      color:var(--muted);
+    }
+    .signoff strong{
+      display:block;
+      margin-top:8px;
+      color:var(--ink);
+      font-size:28px;
+      font-weight:500;
+    }
+
+    footer{
+      position:relative;
+      z-index:2;
+      text-align:center;
+      padding:16px 16px 50px;
+      color:var(--muted);
+      font-size:12px;
+    }
+  </style>
+</head>
+<body class="locked">
+  <div class="site-bg"></div>
+
+  <template id="floralTemplate">
+    <svg viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M28 170C70 118 90 76 184 32" stroke="#94A281" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M81 103C47 98 42 68 70 51C95 70 102 91 81 103Z" fill="#AAB893"/>
+      <path d="M110 75C88 50 101 25 132 22C151 48 141 70 110 75Z" fill="#93A07B"/>
+      <path d="M56 136C23 134 11 108 35 87C63 99 74 122 56 136Z" fill="#BDC7A3"/>
+      <path d="M145 55C119 36 126 12 158 9C176 33 169 53 145 55Z" fill="#A5B28C"/>
+      <path d="M126 114C101 95 109 73 139 70C155 92 148 111 126 114Z" fill="#B5C09C"/>
+      <circle cx="43" cy="158" r="22" fill="#F8F0E3"/>
+      <circle cx="43" cy="158" r="9" fill="#D2B273"/>
+      <circle cx="68" cy="123" r="15" fill="#F4E5D4"/>
+      <circle cx="68" cy="123" r="6" fill="#D2B273"/>
+      <circle cx="99" cy="94" r="12" fill="#F7EFE4"/>
+      <circle cx="99" cy="94" r="5" fill="#D2B273"/>
+      <circle cx="137" cy="62" r="8" fill="#F8F1E8"/>
+      <circle cx="137" cy="62" r="3" fill="#D2B273"/>
+    </svg>
+  </template>
+
+  <!-- Opening entrance -->
+  <div class="intro tap-ready" id="intro">
+    <div class="intro-phone">
+      <div class="intro-slide active" id="slide1" style="background-image:url('opening_closed.png');"></div>
+      <div class="intro-slide" id="slide2" style="background-image:url('opening_tap.png');"></div>
+      <div class="intro-slide" id="slide3" style="background-image:url('opening_open.png');"></div>
+
+      <div class="pulse-ring"></div>
+      <button class="intro-tap-area" id="openInvitation" aria-label="Tap to open invitation"></button>
+    </div>
+  </div>
+
+  <main>
+    <section id="welcome">
+      <div class="page">
+        <div class="floral tl" data-floral></div>
+        <div class="floral br" data-floral></div>
+
+        <p class="eyebrow">Together with our families</p>
+        <div class="names">
+          Ashish
+          <span class="amp">&</span>
+          Christa
+        </div>
+
+        <p class="eyebrow" style="margin-top:24px; margin-bottom:8px;">Invite you to our</p>
+        <div class="script-title">Wedding</div>
+
+        <p class="copy">
+          With grateful hearts, we joyfully invite you
+          to celebrate our wedding day as we begin
+          this beautiful journey together.
+        </p>
+
+        <p class="date-main">Saturday<br>13 July 2026</p>
+
+        <div class="scroll-down">
+          Scroll Down
+          <span>⌄</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="details">
+      <div class="page">
+        <div class="floral tl" data-floral></div>
+
+        <h2 class="section-title">Wedding Details</h2>
+
+        <div class="detail-group">
+          <div class="detail-heading">Wedding Ceremony</div>
+          <div class="detail-list">
+            <div class="detail-item">
+              <div class="icon">☷</div>
+              <div>Saturday<br>13 July 2026</div>
+            </div>
+            <div class="detail-item">
+              <div class="icon">◷</div>
+              <div>10:30 AM</div>
+            </div>
+            <div class="detail-item">
+              <div class="icon">⌖</div>
+              <div>St. Mary’s Church<br>Kakkanad / Put your exact church address here</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="detail-group">
+          <div class="detail-heading">Reception</div>
+          <div class="detail-list">
+            <div class="detail-item">
+              <div class="icon">◷</div>
+              <div>06:00 PM onwards</div>
+            </div>
+            <div class="detail-item">
+              <div class="icon">⌖</div>
+              <div>Grand Reception Venue<br>Put your reception venue address here</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scroll-down">
+          Scroll Down
+          <span>⌄</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="location">
+      <div class="page">
+        <div class="floral br" data-floral></div>
+
+        <h2 class="section-title">Location</h2>
+        <div class="map-box">⌖</div>
+        <a class="map-btn" href="https://maps.app.goo.gl/ScECFsZaf27epcaJ6" target="_blank" rel="noopener">Open in Maps</a>
+
+        <div class="divider"></div>
+
+        <div class="message-block">
+          <h3>A Short Message</h3>
+          <p>
+            Your presence will make our day even more special
+            as we begin this new journey together.
+          </p>
+        </div>
+
+        <div class="message-block">
+          <h3>Bible Verse</h3>
+          <p>
+            “A cord of three strands is not quickly broken.”<br>
+            Ecclesiastes 4:12
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section id="closing">
+      <div class="page">
+        <div class="floral tl" data-floral></div>
+        <div class="floral br" data-floral></div>
+
+        <div class="thanks">Thank You</div>
+        <div class="divider"></div>
+
+        <p class="closing-copy">
+          We can’t wait to celebrate with you!
+        </p>
+
+        <p class="signoff">
+          With Love,
+          <strong>Ashish & Christa</strong>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer>Wedding Invitation • Ashish & Christa</footer>
+
+  <script>
+    const floralMarkup = document.getElementById('floralTemplate').innerHTML;
+    document.querySelectorAll('[data-floral]').forEach(el => {
+      el.innerHTML = floralMarkup;
+    });
+
+    const intro = document.getElementById('intro');
+    const openBtn = document.getElementById('openInvitation');
+    const slide1 = document.getElementById('slide1');
+    const slide2 = document.getElementById('slide2');
+    const slide3 = document.getElementById('slide3');
+
+    openBtn.addEventListener('click', () => {
+      openBtn.disabled = true;
+      slide1.classList.remove('active');
+      slide2.classList.add('active');
+
+      setTimeout(() => {
+        slide2.classList.remove('active');
+        slide3.classList.add('active');
+      }, 450);
+
+      setTimeout(() => {
+        intro.classList.add('hidden');
+        document.body.classList.remove('locked');
+      }, 1900);
+    });
+  </script>
+</body>
+</html>
